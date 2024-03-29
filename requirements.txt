@@ -1,0 +1,9 @@
+torch 
+matplotlib
+numpy
+pandas
+torchvision
+tqdm
+pytorch-lightning
+torchmetrics
+collections
