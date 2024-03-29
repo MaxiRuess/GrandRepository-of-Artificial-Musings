@@ -158,3 +158,9 @@ data/*
 # Binary PyTorch models
 *.pt
 *.state_dict
+
+# Logs 
+notebooks/logs/*
+
+# Temporary OS files
+.DS_Store
