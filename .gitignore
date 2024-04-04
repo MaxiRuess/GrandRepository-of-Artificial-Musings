@@ -160,7 +160,8 @@ data/*
 *.state_dict
 
 # Logs 
-notebooks/logs/*
+notebooks/Image_Classification/logs/*
 
 # Temporary OS files
 .DS_Store
+

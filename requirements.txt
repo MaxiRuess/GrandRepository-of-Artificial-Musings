@@ -7,3 +7,4 @@ tqdm
 pytorch-lightning
 torchmetrics
 collections
+transformers
