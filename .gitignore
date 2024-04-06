@@ -165,3 +165,6 @@ notebooks/Image_Classification/logs/*
 # Temporary OS files
 .DS_Store
 
+
+# environment 
+dl_101/
