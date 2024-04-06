@@ -17,3 +17,5 @@ To boldly go where no tensor has been gradient-descented before, embarking on qu
 Enter at your own risk. The creator is not responsible for lost data, lost sanity, or accidental AI uprisings. Bring your own computational resources, a sense of humor, and an appreciation for the chaotic beauty of machine learning.
 
 Remember, in the Grand Repository of Artificial Musings, every commit is an adventure, every pull request a saga. May your epochs be few and your learning rates be judicious.
+
+>If you're like me and Sarcasms is not your strong suit, this is supposed to be ironic or at least funny.
