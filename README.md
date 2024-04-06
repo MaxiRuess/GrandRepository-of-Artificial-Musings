@@ -4,7 +4,7 @@
 ## Our Mission
 To boldly go where no tensor has been gradient-descented before, embarking on quests to decipher the cryptic whispers of data. Here, in this digital coliseum, models clash in the arena of accuracy, battling overfitting dragons, under the watchful eyes of their creators (who are, frankly, just here to see if anything catches on fire).
 
-##What's Inside?
+## What's Inside?
 - Architectural Wonders: Gaze upon layers stacked upon layers, in designs inspired by the tower of Babel, yet somehow more confusing. We've got architectures so cutting-edge, they're basically the digital equivalent of trying to balance on the edge of a razor blade. Fun!
  - Experiments of Dubious Honor: Dive into folders where projects teeter on the edge of genius and madness. These are the Frankensteins of the machine learning world, stitched together with hope, duct tape, and an unhealthy dose of "Let's see what happens."
 
