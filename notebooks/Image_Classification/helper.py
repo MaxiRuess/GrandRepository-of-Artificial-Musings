@@ -14,6 +14,7 @@ import tqdm
 from torchmetrics import ConfusionMatrix
 from mlxtend.plotting import plot_confusion_matrix
 import time
+from tqdm import tqdm
 
 
 def set_device():
@@ -137,6 +138,45 @@ def build_dataloaders_mnist(data_path, train_transforms, test_transforms,  num_w
     
     return train_dataloader, test_dataloader, test_dataset_viz, class_names
     
+
+def build_dataloaders_fmnist(data_path, train_transforms, test_transforms, num_workers, batch_size): 
+    """
+    Function to build dataloaders for the Fashion MNIST dataset
+    
+    """
+    
+    train_dataset = datasets.FashionMNIST(data_path, 
+                                          train=True, 
+                                          download=True, 
+                                          transform=train_transforms, 
+                                         )
+    
+    test_dataset = datasets.FashionMNIST(data_path, 
+                                         train=False, 
+                                         download=True, 
+                                         transform=test_transforms)
+    
+    test_dataset_viz = datasets.FashionMNIST(data_path, 
+                                             train=False, 
+                                             download=True, 
+                                             transform=transforms.Compose([transforms.ToTensor()]))
+    
+    train_dataloader = DataLoader(train_dataset,
+                                  batch_size=batch_size, 
+                                  shuffle=True, 
+                                  num_workers=num_workers, 
+                                  persistent_workers=True)
+    
+    test_dataloader = DataLoader(test_dataset, 
+                                 batch_size=batch_size,
+                                 shuffle=False, 
+                                 num_workers=num_workers, 
+                                 persistent_workers=True)
+    
+    class_names = train_dataset.classes
+    
+    return train_dataloader, test_dataloader, test_dataset_viz, class_names
+
     
     
 def train_model(model, train_dataloader, test_dataloader, epochs, criterion, optimizer, device, scheduler = None):
