@@ -169,4 +169,6 @@ notebooks/Image_Classification/logs/*
 # environment 
 dl_101/
 
-# models
+# Vector Cache
+
+notebooks/NLP/.vector_cache/*
