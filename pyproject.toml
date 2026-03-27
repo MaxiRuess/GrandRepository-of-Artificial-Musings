@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "deeplearning-101"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "torch",
+    "torchvision",
+    "torchmetrics",
+    "pytorch-lightning",
+    "transformers",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "tqdm",
+    "mlxtend",
+]
+
+[tool.setuptools.packages.find]
+include = ["src*"]
