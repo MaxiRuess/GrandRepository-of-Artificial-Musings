@@ -9,7 +9,7 @@ Educational deep learning repository exploring neural network architectures thro
 ## Setup
 
 ```bash
-python -m venv dl_101
+python3.12 -m venv dl_101
 source dl_101/bin/activate
 pip install -e .
 ```
@@ -42,6 +42,10 @@ src/                            # Importable Python package
 ├── training/evaluation.py      # evaluate_model() with confusion matrix
 ├── models/attention.py         # naive_attention(), flash_attention(), pytorch_sdpa()
 ├── models/resnet.py            # make_resnet18_cifar10(), CheckpointedResNet18
+├── models/lora.py              # LoRALinear, LoRAModel (from-scratch LoRA)
+├── models/dqn.py               # QNetwork, ReplayBuffer (DQN components)
+├── models/ppo.py               # ActorCritic, ContinuousActorCritic, RolloutBuffer
+├── models/grpo.py              # compute_group_advantages(), compute_per_token_kl()
 └── infra/modal_runner.py       # Modal GPU runner: run_training(), run_attention_benchmark()
 
 notebooks/
@@ -51,8 +55,8 @@ notebooks/
 │   ├── RNNs/                   # RNN/LSTM sentiment analysis
 │   ├── Transformers/           # GPT-2, Transformers from scratch, ViT, BERT
 │   └── hugging_face/           # HuggingFace playgrounds (NLP, image detection)
-├── 03_Training_Techniques/     # Flash Attention, Mixed Precision, Gradient Accumulation
-├── 04_Reinforcement_Learning/  # RL algorithms and experiments
+├── 03_Training_Techniques/     # Flash Attention, Mixed Precision, Gradient Accumulation, LoRA/QLoRA
+├── 04_Reinforcement_Learning/  # DQN, PPO (discrete + continuous), GRPO
 └── 05_Papers/                  # Paper reimplementations
 
 data/                           # Auto-downloaded datasets (CIFAR-10, MNIST, FashionMNIST)
@@ -71,3 +75,7 @@ data/                           # Auto-downloaded datasets (CIFAR-10, MNIST, Fas
 Core stack: PyTorch, torchvision, transformers (HuggingFace), pytorch-lightning, torchmetrics, matplotlib, numpy, pandas, tqdm, mlxtend.
 
 Optional: `modal` (for remote GPU training — install with `pip install -e ".[gpu]"`).
+
+Optional: `peft`, `bitsandbytes`, `trl`, `datasets`, `accelerate` (for LLM fine-tuning — install with `pip install -e ".[llm]"`).
+
+Optional: `gymnasium` (for RL notebooks — install with `pip install -e ".[rl]"`).
