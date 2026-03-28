@@ -75,49 +75,68 @@ class ActorCritic(nn.Module):
 
 class ContinuousActorCritic(nn.Module):
     """
-    Shared-trunk actor-critic network for continuous action spaces.
+    Actor-critic for continuous action spaces using a Gaussian policy.
 
-    Uses a Gaussian policy: the actor outputs a mean, and log_std is a
-    learnable parameter (not state-dependent). Actions are sampled from
-    Normal(mean, exp(log_std)) and clipped to action bounds.
+    Uses SEPARATE networks for actor and critic to avoid competing gradients.
+    log_std is clamped to prevent exploration collapse or explosion.
 
     Architecture:
-        state → shared(128 → ReLU → 128 → ReLU) → mean_head(action_size)
-                                                  → critic_head(1)
-        log_std: learnable parameter (one per action dimension)
+        state → actor(256 → Tanh → 256 → Tanh) → mean_head(action_size)
+        state → critic(256 → Tanh → 256 → Tanh) → critic_head(1)
+        log_std: learnable parameter, clamped to [LOG_STD_MIN, LOG_STD_MAX]
 
     Args:
         state_size: Dimension of the state space
         action_size: Number of continuous action dimensions
-        hidden_size: Width of shared hidden layers
+        hidden_size: Width of hidden layers
         action_low: Lower bound for action clipping
         action_high: Upper bound for action clipping
     """
 
-    def __init__(self, state_size, action_size, hidden_size=128,
+    LOG_STD_MIN = -2.0   # σ min ≈ 0.14
+    LOG_STD_MAX = 0.5    # σ max ≈ 1.65
+
+    def __init__(self, state_size, action_size, hidden_size=256,
                  action_low=-2.0, action_high=2.0):
         super().__init__()
         self.action_low = action_low
         self.action_high = action_high
 
-        self.shared = nn.Sequential(
+        self.actor = nn.Sequential(
             nn.Linear(state_size, hidden_size),
-            nn.ReLU(),
+            nn.Tanh(),
             nn.Linear(hidden_size, hidden_size),
-            nn.ReLU(),
+            nn.Tanh(),
         )
         self.mean_head = nn.Linear(hidden_size, action_size)
+
+        self.critic = nn.Sequential(
+            nn.Linear(state_size, hidden_size),
+            nn.Tanh(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.Tanh(),
+        )
         self.critic_head = nn.Linear(hidden_size, 1)
 
-        # Learnable log standard deviation (one per action dim)
-        self.log_std = nn.Parameter(torch.zeros(action_size))
+        self.log_std = nn.Parameter(torch.full((action_size,), -0.5))
+
+        # Orthogonal initialization
+        for net in [self.actor, self.critic]:
+            for layer in net:
+                if isinstance(layer, nn.Linear):
+                    nn.init.orthogonal_(layer.weight, gain=np.sqrt(2))
+                    nn.init.zeros_(layer.bias)
+        nn.init.orthogonal_(self.mean_head.weight, gain=0.01)
+        nn.init.zeros_(self.mean_head.bias)
+        nn.init.orthogonal_(self.critic_head.weight, gain=1.0)
+        nn.init.zeros_(self.critic_head.bias)
 
     def forward(self, x):
         """Returns (action_mean, action_std, state_value)."""
-        features = self.shared(x)
-        mean = self.mean_head(features)
-        std = self.log_std.exp().expand_as(mean)
-        value = self.critic_head(features).squeeze(-1)
+        mean = self.mean_head(self.actor(x))
+        log_std = torch.clamp(self.log_std, self.LOG_STD_MIN, self.LOG_STD_MAX)
+        std = log_std.exp().expand_as(mean)
+        value = self.critic_head(self.critic(x)).squeeze(-1)
         return mean, std, value
 
     def act(self, state):
@@ -137,7 +156,7 @@ class ContinuousActorCritic(nn.Module):
             mean, std, value = self.forward(state)
             dist = Normal(mean, std)
             action = dist.sample()
-            log_prob = dist.log_prob(action).sum(-1)  # sum over action dims
+            log_prob = dist.log_prob(action).sum(-1)
             action = torch.clamp(action, self.action_low, self.action_high)
 
         return action.squeeze(0).numpy(), log_prob.item(), value.item()
