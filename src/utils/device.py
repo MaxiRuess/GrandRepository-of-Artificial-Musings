@@ -38,3 +38,23 @@ def set_seed(seed):
     np.random.seed(seed)
     torch.cuda.manual_seed_all(seed)
     print(f"Set seed for reproducibility: {seed}")
+
+
+def get_amp_config(device):
+    """
+    Return the appropriate (device_type, dtype, use_scaler) for mixed precision training.
+
+    - CUDA: bf16 if supported (Ampere+), otherwise fp16 with GradScaler
+    - MPS: fp16, no GradScaler (not supported)
+    - CPU: bf16, no GradScaler
+    """
+    device_type = device if isinstance(device, str) else device.type
+
+    if device_type == "cuda":
+        if torch.cuda.is_bf16_supported():
+            return device_type, torch.bfloat16, False
+        return device_type, torch.float16, True
+    elif device_type == "mps":
+        return device_type, torch.float16, False
+    else:
+        return device_type, torch.bfloat16, False
