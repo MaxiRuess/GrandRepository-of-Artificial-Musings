@@ -1,5 +1,5 @@
 # The Grand Repository of Artificial Musings
-🤖 Welcome, brave soul, to the cavernous depths of The Grand Repository of Artificial Musings, where deep learning models frolic in the boundless meadows of computation, and architectures stand as monuments to human ingenuity (and stubbornness).
+Welcome, brave soul, to the cavernous depths of The Grand Repository of Artificial Musings, where deep learning models frolic in the boundless meadows of computation, and architectures stand as monuments to human ingenuity (and stubbornness).
 
 ## Our Mission
 To boldly go where no tensor has been gradient-descented before, embarking on quests to decipher the cryptic whispers of data. Here, in this digital coliseum, models clash in the arena of accuracy, battling overfitting dragons, under the watchful eyes of their creators (who are, frankly, just here to see if anything catches on fire).

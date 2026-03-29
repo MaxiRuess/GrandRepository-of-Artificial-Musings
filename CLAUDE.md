@@ -30,7 +30,7 @@ jupyter notebook
 jupyter lab
 ```
 
-Notebooks are the primary artifact. Open and run cells interactively. Training notebooks include "Run on GPU (Modal)" sections at the end for remote NVIDIA GPU execution.
+Notebooks are the primary artifact. Open and run cells interactively. Training notebooks include "Run on GPU (Modal)" sections at the end for remote NVIDIA GPU execution. Notebooks also include Colab support — they auto-clone the repo when running in Google Colab.
 
 ## Architecture
 
@@ -46,6 +46,7 @@ src/                            # Importable Python package
 ├── models/dqn.py               # QNetwork, ReplayBuffer (DQN components)
 ├── models/ppo.py               # ActorCritic, ContinuousActorCritic, RolloutBuffer
 ├── models/grpo.py              # compute_group_advantages(), compute_per_token_kl()
+├── models/dpo.py               # compute_dpo_loss()
 └── infra/modal_runner.py       # Modal GPU runner: run_training(), run_attention_benchmark()
 
 notebooks/
@@ -56,17 +57,23 @@ notebooks/
 │   ├── Transformers/           # GPT-2, Transformers from scratch, ViT, BERT
 │   └── hugging_face/           # HuggingFace playgrounds (NLP, image detection)
 ├── 03_Training_Techniques/     # Flash Attention, Mixed Precision, Gradient Accumulation, LoRA/QLoRA
-├── 04_Reinforcement_Learning/  # DQN, PPO (discrete + continuous), GRPO
-└── 05_Papers/                  # Paper reimplementations
+├── 04_Reinforcement_Learning/  # DQN, PPO (discrete + continuous), GRPO, PPO Pendulum
+├── 05_Papers/                  # DPO, RoPE, Attention Is All You Need, Mixture of Experts
+├── 06_Kernels/                 # Triton GPU kernels: Vector Add, Softmax, MatMul, LayerNorm
+├── 07_Model_Replications/      # DeepSeek-V3, Nemotron-3 Super, Qwen 3.5, Kimi K2
+└── 08_JAX/                     # JAX experiments
 
 data/                           # Auto-downloaded datasets (CIFAR-10, MNIST, FashionMNIST)
 ```
 
 ### Key patterns
 
-- **Notebooks import from `src/`** — each notebook adds the project root to `sys.path` at the top, then imports shared utilities from `src.*`.
+- **Notebooks import from `src/`** — each notebook adds the project root to `sys.path` at the top, then imports shared utilities from `src.*`. Colab-aware: auto-clones repo when in Google Colab.
 - **New shared code goes in `src/`**, not inline in notebooks. Models → `src/models/`, training utils → `src/training/`, data loading → `src/data/`.
 - **Modal for GPU training** — `src/infra/modal_runner.py` provides `run_training()` and `run_attention_benchmark()` that run on remote NVIDIA GPUs. Called via `.remote()` from notebooks.
+- **Model Replications** build scaled-down versions of frontier LLMs (DeepSeek-V3, Nemotron-3, Qwen 3.5, Kimi K2) from scratch, reusing concepts from earlier notebooks.
+- **All formulas in notebooks use `$...$`** (single dollar, left-aligned), never `$$...$$` (centered display math).
+- **Static comparison tables use markdown**, not pandas DataFrames.
 - Device detection prioritizes Apple MPS, then CUDA, then CPU (`src/utils/device.py`).
 - Datasets auto-download to `data/` on first run via torchvision.
 
@@ -79,3 +86,5 @@ Optional: `modal` (for remote GPU training — install with `pip install -e ".[g
 Optional: `peft`, `bitsandbytes`, `trl`, `datasets`, `accelerate` (for LLM fine-tuning — install with `pip install -e ".[llm]"`).
 
 Optional: `gymnasium` (for RL notebooks — install with `pip install -e ".[rl]"`).
+
+Optional: `triton` (for GPU kernel notebooks — install with `pip install -e ".[kernels]"`).
